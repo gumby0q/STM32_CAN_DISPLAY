@@ -1,0 +1,13 @@
+main.c:193:9:u8x8_gpio_and_delay_8080	8	static
+main.c:107:5:_write	8	static
+main.c:125:6:user_delay_ms	0	static
+main.c:134:6:send_8080_data_delay_100u	0	static
+main.c:141:6:send_8080_data	24	static
+main.c:165:9:u8x8_byte_8080	8	static
+main.c:339:6:display_update	120	static
+main.c:627:6:SystemClock_Config	80	static
+main.c:414:5:main	56	static
+main.c:882:6:HAL_CAN_TxMailbox0CompleteCallback	0	static
+main.c:889:6:HAL_CAN_RxFifo0MsgPendingCallback	24	static
+main.c:924:6:HAL_TIM_PeriodElapsedCallback	12	static
+main.c:965:6:Error_Handler	0	static
