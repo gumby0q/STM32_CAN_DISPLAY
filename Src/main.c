@@ -69,6 +69,9 @@ volatile uint32_t testCounter = 0;
 
 
 struct display_screen1_data screen1_data;
+struct display_screen1_error_message screen1_error_holder;
+
+
 
 
 int32_t temperature;
@@ -573,49 +576,53 @@ int main(void)
 	  testCounter++;
 	  memset(tmp_string, 0, 20);
 
-
-	  u8g2_FirstPage(&u8g2);
-	  do
-	 {
-//		u8g2_font_luRS08_tf
-//		u8g2_font_luBS08_tf
-//		u8g2_font_luIS08_tf
-		  sprintf(tmp_string, "testCounter:%lu", (uint32_t)testCounter);
-		  u8g2_SetFont(&u8g2, u8g2_font_luBS08_tf);
-		  u8g2_DrawStr(&u8g2, 0, 10, tmp_string);
-
-		  u8g2_SetFont(&u8g2, u8g2_font_luRS08_tf);
-
-//		  u8g2_font_5x7_tf
-//		  u8g2_SetFont(&u8g2, u8g2_font_5x7_tf);
-		  u8g2_SetFont(&u8g2, u8g2_font_courR08_tf);
-
-		  sprintf(tmp_string, "temp:%lu%sC", testCounter,"\xb0");
-		  u8g2_DrawStr(&u8g2, 0, 24, tmp_string);
-//		  u8g2_get("\xb0");
-		  sprintf(tmp_string, "hm:%lu", testCounter);
-		  u8g2_DrawStr(&u8g2, 0, 40, tmp_string);
-	 } while (u8g2_NextPage(&u8g2));
-
-
+//
+//	  u8g2_FirstPage(&u8g2);
+//	  do
+//	 {
+////		u8g2_font_luRS08_tf
+////		u8g2_font_luBS08_tf
+////		u8g2_font_luIS08_tf
+//		  sprintf(tmp_string, "testCounter:%lu", (uint32_t)testCounter);
+//		  u8g2_SetFont(&u8g2, u8g2_font_luBS08_tf);
+//		  u8g2_DrawStr(&u8g2, 0, 10, tmp_string);
+//
+//		  u8g2_SetFont(&u8g2, u8g2_font_luRS08_tf);
+//
+////		  u8g2_font_5x7_tf
+////		  u8g2_SetFont(&u8g2, u8g2_font_5x7_tf);
+//		  u8g2_SetFont(&u8g2, u8g2_font_courR08_tf);
+//
+//		  sprintf(tmp_string, "temp:%lu%sC", testCounter,"\xb0");
+//		  u8g2_DrawStr(&u8g2, 0, 24, tmp_string);
+////		  u8g2_get("\xb0");
+//		  sprintf(tmp_string, "hm:%lu", testCounter);
+//		  u8g2_DrawStr(&u8g2, 0, 40, tmp_string);
+//	 } while (u8g2_NextPage(&u8g2));
+//
+//
 
 
 	    HAL_GPIO_TogglePin(GPIOC, LED_Pin);
 	  	 printf("OK2!\r\n");
 //	  display_update();
 
-//	  sprintf(screen1_data.str_boiler_value, "ddd1");
-//
-//	  sprintf(screen1_data.str_tempreture_value_1, "ddd2");
-//	  sprintf(screen1_data.str_humidity_value_1, "ddd3");
-//
-//	  sprintf(screen1_data.str_tempreture_value_2, "ddd4");
-//	  sprintf(screen1_data.str_humidity_value_2, "ddd5");
-//
-//	  sprintf(screen1_data.str_pump_status_1, "ddd6");
-//	  sprintf(screen1_data.str_pump_status_2, "ddd7");
+	  sprintf(screen1_data.str_boiler_value, "ddd1");
 
-//	  display_update2(&u8g2, &screen1_data);
+	  sprintf(screen1_data.str_tempreture_value_1, "ddd2");
+	  sprintf(screen1_data.str_humidity_value_1, "ddd3");
+
+	  sprintf(screen1_data.str_tempreture_value_2, "ddd4");
+	  sprintf(screen1_data.str_humidity_value_2, "ddd5");
+
+	  sprintf(screen1_data.str_pump_status_1, "ddd6");
+	  sprintf(screen1_data.str_pump_status_2, "ddd7");
+
+//	  sprintf(screen1_error_holder.str_error, "test error");
+//	  screen1_error_holder.error_flag = ERROR_FLAG_ON;
+
+
+	  display_update2(&u8g2, &screen1_data, &screen1_error_holder);
   }
   /* USER CODE END 3 */
 }
