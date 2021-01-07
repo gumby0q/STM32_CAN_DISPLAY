@@ -66,6 +66,13 @@ UART_HandleTypeDef huart3;
 static u8g2_t u8g2;
 
 volatile uint32_t testCounter = 0;
+volatile uint32_t test_counter = 0;
+
+
+#define BUTTON_DEBOUNCE_TIME 50
+volatile uint16_t button_counter = 0;
+volatile uint8_t button_status = 0;
+volatile uint8_t global_button_status = 0;
 
 
 struct display_screen1_data screen1_data;
@@ -106,6 +113,45 @@ static void MX_TIM1_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
+void button_debounce();
+void button_debounce() {
+	uint8_t button_state = HAL_GPIO_ReadPin(BUTTON_0_GPIO_Port, BUTTON_0_Pin);
+
+	if (button_status == 0) {
+		if (button_state == RESET) {
+			button_counter++;
+
+			if (button_counter >= BUTTON_DEBOUNCE_TIME) {
+				button_counter = 0;
+
+				button_status = 1;
+
+				global_button_status = 1;
+
+				// callback paressdown
+			}
+		} else {
+			button_counter = 0;
+		}
+	}
+
+
+	if (button_status != 0) {
+		if (button_state != RESET) {
+			button_counter++;
+
+			if (button_counter >= BUTTON_DEBOUNCE_TIME) {
+				button_counter = 0;
+
+				button_status = 0;
+
+				// callback pressup
+			}
+		} else {
+			button_counter = 0;
+		}
+	}
+}
 
 int _write(int file, char *ptr, int len)
 {
@@ -420,7 +466,6 @@ int main(void)
 
   /* USER CODE END 1 */
 
-
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -563,6 +608,13 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+	  if (global_button_status != 0) {
+		  global_button_status = 0;
+
+		  HAL_GPIO_TogglePin(GPIOC, LED_Pin);
+	  }
+
 //	  HAL_Delay(2000);
 //	  send_8080_data_delay_100u(50000);
 //	  struct bme280_data comp_data;
@@ -603,7 +655,7 @@ int main(void)
 //
 
 
-	    HAL_GPIO_TogglePin(GPIOC, LED_Pin);
+//	    HAL_GPIO_TogglePin(GPIOC, LED_Pin);
 	  	 printf("OK2!\r\n");
 //	  display_update();
 
@@ -719,9 +771,9 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 1440;
+  htim1.Init.Prescaler = 40;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 50000;
+  htim1.Init.Period = 1000;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -932,31 +984,39 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if( htim->Instance == TIM1 ){
 //	HAL_GPIO_TogglePin(GPIOC, LED_Pin);
-	++temperature1timeout;
-	++temperature2timeout;
-	++humidity1timeout;
-	++humidity2timeout;
-	++input_packet_boiler_timeout;
+//	++temperature1timeout;
+//	++temperature2timeout;
+//	++humidity1timeout;
+//	++humidity2timeout;
+//	++input_packet_boiler_timeout;
+//
+//	if(temperature1timeout>= DATA_WAIT_TIMEOUT){
+//		temperature1timeout = DATA_WAIT_TIMEOUT;
+//	}
+//
+//	if(temperature2timeout>= DATA_WAIT_TIMEOUT){
+//		temperature2timeout = DATA_WAIT_TIMEOUT;
+//	}
+//
+//	if(humidity1timeout>= DATA_WAIT_TIMEOUT){
+//		humidity1timeout = DATA_WAIT_TIMEOUT;
+//	}
+//
+//	if(humidity2timeout>= DATA_WAIT_TIMEOUT){
+//		humidity2timeout = DATA_WAIT_TIMEOUT;
+//	}
+//
+//	if(input_packet_boiler_timeout>= DATA_WAIT_TIMEOUT){
+//		input_packet_boiler_timeout = DATA_WAIT_TIMEOUT;
+//	}
 
-	if(temperature1timeout>= DATA_WAIT_TIMEOUT){
-		temperature1timeout = DATA_WAIT_TIMEOUT;
-	}
+	  button_debounce();
 
-	if(temperature2timeout>= DATA_WAIT_TIMEOUT){
-		temperature2timeout = DATA_WAIT_TIMEOUT;
-	}
-
-	if(humidity1timeout>= DATA_WAIT_TIMEOUT){
-		humidity1timeout = DATA_WAIT_TIMEOUT;
-	}
-
-	if(humidity2timeout>= DATA_WAIT_TIMEOUT){
-		humidity2timeout = DATA_WAIT_TIMEOUT;
-	}
-
-	if(input_packet_boiler_timeout>= DATA_WAIT_TIMEOUT){
-		input_packet_boiler_timeout = DATA_WAIT_TIMEOUT;
-	}
+	  test_counter++;
+	  if (test_counter >= 1000) {
+		  test_counter = 0;
+//		  HAL_GPIO_TogglePin(GPIOC, LED_Pin);
+	  }
  } else if ( htim->Instance == TIM2 ) {
 	 if (micro_delay_counter > 0 ) {
 		 micro_delay_counter--;
